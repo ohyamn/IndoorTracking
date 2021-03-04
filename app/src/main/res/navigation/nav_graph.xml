@@ -17,4 +17,11 @@
         android:label="@string/title_testing"
         tools:layout="@layout/fragment_testing" />
 
+    <fragment
+        android:id="@+id/navigation_floor_plans"
+        android:name="com.example.indoortracking.ui.floorplan.FloorPlanFragment"
+        android:label="Floor Plans"
+        tools:layout="@layout/floor_plan_fragment"
+        />
+
 </navigation>
