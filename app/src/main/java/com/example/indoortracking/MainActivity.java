@@ -1,12 +1,20 @@
 package com.example.indoortracking;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.example.indoortracking.ui.floorplan.FloorPlanFragment;
@@ -29,15 +37,20 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
-    ToggleButton enableButton;
-    Button uploadButton;
-    boolean scanEnable = false;
     DrawerLayout drawerLayout;
+    AppBarConfiguration appBarConfiguration2;
+    private static final String TAG = "Main Activity";
+    public static boolean scanEnable;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         //Bottom Nav View
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
@@ -50,68 +63,21 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navView, navController);
 
         //Drawer Nav View
-        NavController navController2 = Navigation.findNavController(this, R.id.nav_host_fragment2);
-        AppBarConfiguration appBarConfiguration2 = new AppBarConfiguration.Builder(
-                navController2.getGraph()).setOpenableLayout(drawerLayout)
-                .build();
+        drawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navView2 = findViewById(R.id.nav_view2);
-        NavigationUI.setupWithNavController(navView2, navController2);
+        appBarConfiguration2 = new AppBarConfiguration.Builder(
+                R.id.navigation_mapping,R.id.navigation_testing,R.id.navigation_floor_plans).setOpenableLayout(drawerLayout)
+                .build();
+        NavController navController2 = Navigation.findNavController(this, R.id.nav_host_fragment2);
         NavigationUI.setupActionBarWithNavController(this,navController2,appBarConfiguration2);
-        navView2.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                Fragment fragment = null;
-                Class fragmentClass;
-                switch(item.getItemId()){
-                    case R.id.navigation_mapping:
-                        fragmentClass = MappingFragment.class;
-                        break;
-                    case R.id.navigation_testing:
-                        fragmentClass = TestingFragment.class;
-                        break;
-                    case R.id.navigation_floor_plans:
-                        fragmentClass = FloorPlanFragment.class;
-                        break;
-                    default:
-                        fragmentClass = MappingFragment.class;
-                }
-                try{
-                    fragment = (Fragment) fragmentClass.newInstance();
-                }catch(Exception e){
-                    e.printStackTrace();
-                }
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.nav_host_fragment2,fragment).commit();
-                item.setChecked(true);
-                setTitle(item.getTitle());
-                drawerLayout.closeDrawers();
-                return true;
-            }
-        });
-
-        //Enable Scanning Button
-        enableButton = findViewById(R.id.toggleButton);
-        //enableButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            //public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                //if (isChecked) {
-                    // The toggle is enabled
-                    //scanEnable = true;
-                //} else {
-                    // The toggle is disabled
-                    //scanEnable = false;
-                //}
-            //}
-        //});
-
-        //Upload Button
-        uploadButton = findViewById(R.id.uploadButton);
-        //uploadButton.setOnClickListener(new View.OnClickListener() {
-           // @Override
-            //public void onClick(View v) {
-                //upload pic with coordinates
-          //  }
-       // });
+        NavigationUI.setupWithNavController(navView2, navController2);
     }
 
+    @Override
+    public boolean onSupportNavigateUp(){
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment2);
+        return NavigationUI.navigateUp(navController, appBarConfiguration2)
+                || super.onSupportNavigateUp();
+    }
 
 }

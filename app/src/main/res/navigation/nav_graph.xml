@@ -20,8 +20,7 @@
     <fragment
         android:id="@+id/navigation_floor_plans"
         android:name="com.example.indoortracking.ui.floorplan.FloorPlanFragment"
-        android:label="Floor Plans"
-        tools:layout="@layout/floor_plan_fragment"
-        />
+        android:label="@string/floor_plans"
+        tools:layout="@layout/floor_plan_fragment" />
 
 </navigation>
