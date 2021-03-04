@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.renderscript.ScriptGroup;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,6 +25,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,6 +34,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.navigation.NavController;
+import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -41,9 +44,9 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     DrawerLayout drawerLayout;
+    AppBarConfiguration appBarConfiguration;
     AppBarConfiguration appBarConfiguration2;
     private static final String TAG = "Main Activity";
-    public static boolean scanEnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
-        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
+        appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.navigation_mapping, R.id.navigation_testing)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
@@ -68,16 +71,35 @@ public class MainActivity extends AppCompatActivity {
         appBarConfiguration2 = new AppBarConfiguration.Builder(
                 R.id.navigation_mapping,R.id.navigation_testing,R.id.navigation_floor_plans).setOpenableLayout(drawerLayout)
                 .build();
-        NavController navController2 = Navigation.findNavController(this, R.id.nav_host_fragment2);
-        NavigationUI.setupActionBarWithNavController(this,navController2,appBarConfiguration2);
-        NavigationUI.setupWithNavController(navView2, navController2);
+        NavigationUI.setupActionBarWithNavController(this,navController,appBarConfiguration2);
+        NavigationUI.setupWithNavController(navView2, navController);
+
+        navController.addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {
+            @Override
+            public void onDestinationChanged(@NonNull NavController controller,
+                                             @NonNull NavDestination destination, @Nullable Bundle arguments) {
+                if(destination.getId() == R.id.navigation_floor_plans) {
+                    toolbar.setVisibility(View.VISIBLE);
+                    navView.setVisibility(View.GONE);
+                } else {
+                    toolbar.setVisibility(View.VISIBLE);
+                    navView.setVisibility(View.VISIBLE);
+                }
+            }
+        });
     }
 
     @Override
     public boolean onSupportNavigateUp(){
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment2);
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         return NavigationUI.navigateUp(navController, appBarConfiguration2)
                 || super.onSupportNavigateUp();
     }
 
+    /*@Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        return NavigationUI.onNavDestinationSelected(item, navController)
+                || super.onOptionsItemSelected(item);
+    }*/
 }

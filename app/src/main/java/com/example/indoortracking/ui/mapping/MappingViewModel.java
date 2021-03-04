@@ -12,7 +12,10 @@ public class MappingViewModel extends ViewModel {
 
     public MappingViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("hello");
+    }
+
+    public void setmText(String string) {
+        mText.setValue(string);
     }
 
     public LiveData<String> getText() {

@@ -1,10 +1,19 @@
 package com.example.indoortracking.ui.testing;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.wifi.ScanResult;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,9 +23,15 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.indoortracking.R;
 
-public class TestingFragment extends Fragment {
+import java.util.List;
 
+import static android.content.ContentValues.TAG;
+
+public class TestingFragment extends Fragment {
+    Button scanButton;
     private TestingViewModel testingViewModel;
+    private WifiManager wifiManager;
+    private BroadcastReceiver wifiReceiver;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -30,6 +45,46 @@ public class TestingFragment extends Fragment {
                 textView.setText(s);
             }
         });
+
+        scanButton = root.findViewById(R.id.scanButton);
+        scanButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                scanWifi();
+            }
+        });
+
+        wifiManager = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        wifiReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                List<ScanResult> results = wifiManager.getScanResults();
+                requireActivity().unregisterReceiver(wifiReceiver);
+
+                String display = "";
+                for (ScanResult sr: results) {
+                    display = display.concat("SSID: "+sr.SSID+", RSSI: "+sr.level+"\n");
+                    Log.i(TAG, "SSID: "+sr.SSID+", Level: "+sr.level);
+                }
+                testingViewModel.setmText(display);
+            }
+        };
+
+        if (!wifiManager.isWifiEnabled()) {
+            Toast.makeText(getActivity().getApplicationContext(), "WiFi needs to be enabled", Toast.LENGTH_SHORT).show();
+            wifiManager.setWifiEnabled(true);
+        }
         return root;
+    }
+
+    private void scanWifi() {
+        requireActivity().registerReceiver(wifiReceiver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+        boolean success = wifiManager.startScan();
+        if (!success){ scanFailed(); }
+        Toast.makeText(getActivity().getApplicationContext(), "Scanning...", Toast.LENGTH_SHORT).show();
+    }
+
+    private void scanFailed(){
+        Toast.makeText(getActivity().getApplicationContext(), "Scan failed", Toast.LENGTH_SHORT).show();
     }
 }

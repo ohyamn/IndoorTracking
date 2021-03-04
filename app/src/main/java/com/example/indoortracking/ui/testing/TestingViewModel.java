@@ -10,7 +10,10 @@ public class TestingViewModel extends ViewModel {
 
     public TestingViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is dashboard fragment");
+    }
+
+    public void setmText(String string) {
+        mText.setValue(string);
     }
 
     public LiveData<String> getText() {

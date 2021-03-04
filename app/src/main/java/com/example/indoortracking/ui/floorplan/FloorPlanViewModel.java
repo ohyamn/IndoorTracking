@@ -8,9 +8,9 @@ public class FloorPlanViewModel extends ViewModel {
     // TODO: Implement the ViewModel
     private MutableLiveData<String> mText;
 
-    public void MappingViewModel() {
+    public FloorPlanViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("hello");
+        mText.setValue("This is Floor Plan Fragment");
     }
 
     public LiveData<String> getText() {
