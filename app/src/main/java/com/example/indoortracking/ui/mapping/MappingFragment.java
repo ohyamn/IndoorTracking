@@ -85,12 +85,13 @@ public class MappingFragment extends Fragment {
 
         //Upload Button
         uploadButton = root.findViewById(R.id.uploadButton);
-        //uploadButton.setOnClickListener(new View.OnClickListener() {
-        // @Override
-        //public void onClick(View v) {
+        uploadButton.setOnClickListener(new View.OnClickListener() {
+         @Override
+        public void onClick(View v) {
         //upload pic with coordinates
-        //  }
-        // });
+             Toast.makeText(getActivity().getApplicationContext(), "Uploading...", Toast.LENGTH_SHORT).show();
+          }
+         });
 
         return root;
     }
