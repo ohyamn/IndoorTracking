@@ -23,6 +23,8 @@ import com.example.indoortracking.ui.mapping.MappingFragment;
 import com.example.indoortracking.ui.testing.TestingFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -42,7 +44,7 @@ import androidx.navigation.ui.NavigationUI;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
     DrawerLayout drawerLayout;
     AppBarConfiguration appBarConfiguration;
     AppBarConfiguration appBarConfiguration2;
@@ -69,10 +71,48 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navView2 = findViewById(R.id.nav_view2);
         appBarConfiguration2 = new AppBarConfiguration.Builder(
-                R.id.navigation_mapping,R.id.navigation_testing,R.id.navigation_floor_plans).setOpenableLayout(drawerLayout)
+                R.id.navigation_mapping,R.id.navigation_testing,R.id.navigation_floor_plans,R.id.logout).setOpenableLayout(drawerLayout)
                 .build();
         NavigationUI.setupActionBarWithNavController(this,navController,appBarConfiguration2);
         NavigationUI.setupWithNavController(navView2, navController);
+
+        /*navView2.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                Fragment fragment = null;
+                Class fragmentClass = null;
+                switch(item.getItemId()){
+                    case R.id.navigation_mapping:
+                        fragmentClass = MappingFragment.class;
+                        break;
+                    case R.id.navigation_testing:
+                        fragmentClass = TestingFragment.class;
+                        break;
+                    case R.id.navigation_floor_plans:
+                        fragmentClass = FloorPlanFragment.class;
+                        break;
+                    case R.id.logout:
+                        logout();
+                        break;
+                    default:
+                        fragmentClass = MappingFragment.class;
+                }
+                try{
+                    fragment = (Fragment) fragmentClass.newInstance();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                fragmentManager.beginTransaction().replace(R.id.nav_host_fragment, fragment).commit();
+
+                item.setChecked(true);
+                setTitle(item.getTitle());
+                drawerLayout.closeDrawers();
+
+                return true;
+            }
+        });*/
 
         navController.addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {
             @Override
@@ -85,8 +125,18 @@ public class MainActivity extends AppCompatActivity {
                     toolbar.setVisibility(View.VISIBLE);
                     navView.setVisibility(View.VISIBLE);
                 }
+
             }
         });
+
+    }
+
+    private void logout() {
+        FirebaseAuth.getInstance().signOut();
+
+        Intent intent = new Intent(getApplicationContext(),LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
     }
 
     @Override
@@ -96,10 +146,4 @@ public class MainActivity extends AppCompatActivity {
                 || super.onSupportNavigateUp();
     }
 
-    /*@Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        return NavigationUI.onNavDestinationSelected(item, navController)
-                || super.onOptionsItemSelected(item);
-    }*/
 }
