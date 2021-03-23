@@ -131,14 +131,6 @@ public class MainActivity extends AppCompatActivity{
 
     }
 
-    private void logout() {
-        FirebaseAuth.getInstance().signOut();
-
-        Intent intent = new Intent(getApplicationContext(),LoginActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
-    }
-
     @Override
     public boolean onSupportNavigateUp(){
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);

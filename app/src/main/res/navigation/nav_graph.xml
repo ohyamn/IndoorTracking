@@ -23,4 +23,10 @@
         android:label="@string/floor_plans"
         tools:layout="@layout/floor_plan_fragment" />
 
+    <fragment
+        android:id="@+id/logout"
+        android:name="com.example.indoortracking.LogoutFragment"
+        android:label="Logout"
+        tools:layout="@layout/fragment_logout"/>
+
 </navigation>

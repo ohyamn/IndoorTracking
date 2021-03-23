@@ -1,5 +1,6 @@
 package com.example.indoortracking.ui.mapping;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -9,16 +10,19 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.view.menu.MenuView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -36,7 +40,9 @@ public class MappingFragment extends Fragment {
     private WifiManager wifiManager;
     private BroadcastReceiver wifiReceiver;
     Button scanButton, uploadButton;
+    ImageView floorPlanImage;
 
+    @SuppressLint("ClickableViewAccessibility")
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         mappingViewModel =
@@ -92,6 +98,21 @@ public class MappingFragment extends Fragment {
              Toast.makeText(getActivity().getApplicationContext(), "Uploading...", Toast.LENGTH_SHORT).show();
           }
          });
+
+        //ImageView
+        floorPlanImage = root.findViewById(R.id.image_mapping);
+        floorPlanImage.setOnTouchListener(new View.OnTouchListener(){
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN){
+                    int x = (int) event.getX();
+                    int y = (int) event.getY();
+                    String coordinates = Integer.toString(x) + " " + Integer.toString(y);
+                    Toast.makeText(getActivity().getApplicationContext(),coordinates,Toast.LENGTH_SHORT).show();
+                }
+                return false;
+            }
+        });
 
         return root;
     }
