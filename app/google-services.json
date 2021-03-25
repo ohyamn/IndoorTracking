@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "335921795358",
+    "project_id": "esc-test-4fe83",
+    "storage_bucket": "esc-test-4fe83.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:335921795358:android:652a9eecfec2165150f90f",
+        "android_client_info": {
+          "package_name": "com.example.indoortracking"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "335921795358-vu1v1i2nssn0fmtl97e63211b1bv5vf2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.indoortracking",
+            "certificate_hash": "c5f0558b5ecf45edf64a0001e472b3aeb4262d35"
+          }
+        },
+        {
+          "client_id": "335921795358-t5025204k3bv79rrtumf2h31lto7n0id.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAhqFiKuxdeTqPt5H3AAtQRqFumaPMB9Tk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "335921795358-t5025204k3bv79rrtumf2h31lto7n0id.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
