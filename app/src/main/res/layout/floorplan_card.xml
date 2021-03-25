@@ -18,6 +18,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="@string/floor_plans"/>
+
+        <Button
+            android:id="@+id/downloadButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableRight="@drawable/ic_home_black_24dp"/>
+
     </androidx.appcompat.widget.LinearLayoutCompat>
 
 

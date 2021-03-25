@@ -9,7 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.firebase.auth.FirebaseAuth;
+//import com.google.firebase.auth.FirebaseAuth;
 
 public class LogoutFragment extends Fragment {
 
@@ -28,7 +28,7 @@ public class LogoutFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_logout, container, false);
     }
     private void logout() {
-        FirebaseAuth.getInstance().signOut();
+        //FirebaseAuth.getInstance().signOut();
 
         Intent intent = new Intent(getActivity().getApplicationContext(),LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

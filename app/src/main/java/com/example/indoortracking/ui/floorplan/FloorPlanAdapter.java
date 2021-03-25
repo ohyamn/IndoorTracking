@@ -1,49 +1,51 @@
 package com.example.indoortracking.ui.floorplan;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.text.Layout;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.indoortracking.R;
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.firebase.ui.database.FirebaseRecyclerOptions;
+//import com.firebase.ui.database.FirebaseRecyclerAdapter;
+//import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.example.indoortracking.SharedViewModel;
+import com.example.indoortracking.ui.mapping.MappingFragment;
 import com.squareup.picasso.Picasso;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Set;
 
-public class FloorPlanAdapter extends FirebaseRecyclerAdapter<FloorPlan, FloorPlanAdapter.FloorPlanViewHolder> {
-    //ArrayList<String> locations;
-    //ArrayList<FloorPlan> floorPlans;
-    private Context context;
+public class FloorPlanAdapter extends RecyclerView.Adapter<FloorPlanAdapter.FloorPlanViewHolder> {
+    ArrayList<String> locations;
+    ArrayList<String> images;
+    HashMap<String, String> floorPlans;
+    private final Context context;
+    private final FragmentActivity activity;
 
-    public FloorPlanAdapter(@NonNull FirebaseRecyclerOptions<FloorPlan> options, Context context){
-        super(options);
+    public FloorPlanAdapter(Context context, HashMap<String, String> floorPlans, FragmentActivity activity){
         this.context = context;
+        this.floorPlans = floorPlans;
+        this.activity = activity;
     }
 
-    @Override
-    protected void onBindViewHolder(@NonNull FloorPlanAdapter.FloorPlanViewHolder holder, int position, @NonNull FloorPlan model) {
-        holder.location.setText(model.getLocation());
-        String imageUrl = model.getFloorPlan();
-        //Picasso.with(context)
-        //        .load(imageUrl)
-        //        .fit().centerCrop().into(holder.floorplan);
 
+    public void setup(){
+        Set<String> keySet = floorPlans.keySet();
+        locations = new ArrayList<>(keySet);
+        Collection<String> values = floorPlans.values();
+        images = new ArrayList<>(values);
     }
+
 
     @NonNull
     @Override
@@ -52,13 +54,38 @@ public class FloorPlanAdapter extends FirebaseRecyclerAdapter<FloorPlan, FloorPl
         return new FloorPlanAdapter.FloorPlanViewHolder(view);
     }
 
+    @Override
+    public void onBindViewHolder(@NonNull FloorPlanViewHolder holder, int position) {
+
+        holder.location.setText(locations.get(position));
+
+        Picasso.with(context).load(images.get(position)).into(holder.floorplan);
+        holder.download.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                holder.sharedViewModel.setNameData(images.get(position));
+                //Intent intent = new Intent(activity, MappingFragment.class);
+                //activity.startActivity(intent);
+            }
+        });
+    }
+
+    @Override
+    public int getItemCount() {
+        return locations.size();
+    }
+
     class FloorPlanViewHolder extends RecyclerView.ViewHolder{
-        TextView location; ImageView floorplan;
+        public SharedViewModel sharedViewModel;
+        TextView location; ImageView floorplan; Button download;
         public FloorPlanViewHolder(@NonNull View itemView){
             super(itemView);
 
             location = itemView.findViewById(R.id.location);
             floorplan = itemView.findViewById(R.id.image);
+            download = itemView.findViewById(R.id.downloadButton);
+            sharedViewModel = ViewModelProviders.of(activity).get(SharedViewModel.class);
         }
     }
+
 }

@@ -8,7 +8,7 @@ import com.example.indoortracking.MainActivity;
 
 public class MappingViewModel extends ViewModel {
 
-    private MutableLiveData<String> mText;
+    private final MutableLiveData<String> mText;
 
     public MappingViewModel() {
         mText = new MutableLiveData<>();

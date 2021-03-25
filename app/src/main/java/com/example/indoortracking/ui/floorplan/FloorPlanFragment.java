@@ -1,7 +1,5 @@
 package com.example.indoortracking.ui.floorplan;
 
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -9,48 +7,56 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
+import com.example.indoortracking.APIRequests;
+import com.example.indoortracking.MyApp;
 import com.example.indoortracking.R;
-import com.example.indoortracking.ui.testing.TestingViewModel;
-import com.firebase.ui.database.FirebaseRecyclerOptions;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
-public class FloorPlanFragment extends Fragment {
+import org.json.JSONArray;
+
+import java.util.HashMap;
+
+import static android.content.ContentValues.TAG;
+/*import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;*/
+
+public class FloorPlanFragment extends Fragment{
     private RecyclerView recyclerView;
     FloorPlanAdapter adapter;
-    DatabaseReference db;
+    HashMap<String, String> floorPlans = new HashMap<>();
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.floor_plan_fragment,container, false);
-        db = FirebaseDatabase.getInstance().getReference();
         recyclerView = view.findViewById(R.id.floorplan_recyclerview);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager((view.getContext())));
-        FirebaseRecyclerOptions<FloorPlan> options = new FirebaseRecyclerOptions.Builder<FloorPlan>().setQuery(db, FloorPlan.class).build();
-        adapter = new FloorPlanAdapter(options, view.getContext());
 
-        recyclerView.setAdapter(adapter);
+        RequestQueue queue = Volley.newRequestQueue(getActivity().getApplicationContext());
+
+        Request<JSONArray> request = APIRequests.getAllPlans(view.getContext(), MyApp.Domain);
+        queue.add(request);
+
+        HashMap<String,String> temp = APIRequests.getHashMap();
+        if(!temp.isEmpty()){
+            adapter = new FloorPlanAdapter(view.getContext(), temp, requireActivity());
+
+            Log.d(TAG, temp.toString());
+            adapter.setup();
+
+            recyclerView.setAdapter(adapter);
+        }
 
         return view;
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        adapter.startListening();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        adapter.stopListening();
     }
 }

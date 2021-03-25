@@ -14,21 +14,27 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.view.menu.MenuView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 
-import com.example.indoortracking.MainActivity;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
+import com.example.indoortracking.FloorplanScanner;
+import com.example.indoortracking.MyApp;
 import com.example.indoortracking.R;
+import com.example.indoortracking.SharedViewModel;
+import com.squareup.picasso.Picasso;
+
+import org.json.JSONArray;
 
 import java.util.List;
 
@@ -41,6 +47,10 @@ public class MappingFragment extends Fragment {
     private BroadcastReceiver wifiReceiver;
     Button scanButton, uploadButton;
     ImageView floorPlanImage;
+    FloorplanScanner floorplanScanner;
+    List<ScanResult> results;
+    public SharedViewModel sharedViewModel;
+
 
     @SuppressLint("ClickableViewAccessibility")
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -56,24 +66,18 @@ public class MappingFragment extends Fragment {
             }
         });
 
-        //Enable Scanning Button
-        scanButton = root.findViewById(R.id.scanButton);
-        scanButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                scanWifi();
-            }
-        });
+        RequestQueue queue = Volley.newRequestQueue(getActivity().getApplicationContext());
+        floorplanScanner = new FloorplanScanner();
+
+
 
         //Setup WifiScan
-        //scanText = root.findViewById(R.id.scan_text);
-        //scanText.setText("hello");
         wifiManager = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         wifiReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                List<ScanResult> results = wifiManager.getScanResults();
-                requireActivity().unregisterReceiver(wifiReceiver);
+                results = wifiManager.getScanResults();
+                requireActivity().unregisterReceiver(this);
 
                 String display = "";
                 for (ScanResult sr: results) {
@@ -89,6 +93,14 @@ public class MappingFragment extends Fragment {
             wifiManager.setWifiEnabled(true);
         }
 
+        //Enable Scanning Button
+        scanButton = root.findViewById(R.id.scanButton);
+        scanButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                scanWifi();
+            }
+        });
         //Upload Button
         uploadButton = root.findViewById(R.id.uploadButton);
         uploadButton.setOnClickListener(new View.OnClickListener() {
@@ -96,6 +108,8 @@ public class MappingFragment extends Fragment {
         public void onClick(View v) {
         //upload pic with coordinates
              Toast.makeText(getActivity().getApplicationContext(), "Uploading...", Toast.LENGTH_SHORT).show();
+             Request<JSONArray> request = floorplanScanner.sendMapping(getContext(), MyApp.Domain);
+             queue.add(request);
           }
          });
 
@@ -107,12 +121,25 @@ public class MappingFragment extends Fragment {
                 if (event.getAction() == MotionEvent.ACTION_DOWN){
                     int x = (int) event.getX();
                     int y = (int) event.getY();
-                    String coordinates = Integer.toString(x) + " " + Integer.toString(y);
+                    String coordinates = x + " " + y;
                     Toast.makeText(getActivity().getApplicationContext(),coordinates,Toast.LENGTH_SHORT).show();
+                    Log.i("APscan Results", mappingViewModel.getText().toString());
+                    floorplanScanner.mapPoint(x,y,results);
                 }
                 return false;
             }
         });
+
+        sharedViewModel = ViewModelProviders.of(requireActivity()).get(SharedViewModel.class);
+        Observer<String> nameObserver = new Observer<String>() {
+            @Override
+            public void onChanged(String s) {
+                Picasso.with(getActivity().getApplicationContext()).load(s).placeholder(R.mipmap.ic_launcher).into(floorPlanImage);
+            }
+        };
+        sharedViewModel.getNameData().observe(getViewLifecycleOwner(), nameObserver);
+
+
 
         return root;
     }

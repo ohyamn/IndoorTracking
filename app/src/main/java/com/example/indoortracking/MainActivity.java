@@ -23,8 +23,8 @@ import com.example.indoortracking.ui.mapping.MappingFragment;
 import com.example.indoortracking.ui.testing.TestingFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+//import com.google.firebase.auth.FirebaseAuth;
+//import com.google.firebase.auth.FirebaseUser;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -76,43 +76,6 @@ public class MainActivity extends AppCompatActivity{
         NavigationUI.setupActionBarWithNavController(this,navController,appBarConfiguration2);
         NavigationUI.setupWithNavController(navView2, navController);
 
-        /*navView2.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                Fragment fragment = null;
-                Class fragmentClass = null;
-                switch(item.getItemId()){
-                    case R.id.navigation_mapping:
-                        fragmentClass = MappingFragment.class;
-                        break;
-                    case R.id.navigation_testing:
-                        fragmentClass = TestingFragment.class;
-                        break;
-                    case R.id.navigation_floor_plans:
-                        fragmentClass = FloorPlanFragment.class;
-                        break;
-                    case R.id.logout:
-                        logout();
-                        break;
-                    default:
-                        fragmentClass = MappingFragment.class;
-                }
-                try{
-                    fragment = (Fragment) fragmentClass.newInstance();
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.nav_host_fragment, fragment).commit();
-
-                item.setChecked(true);
-                setTitle(item.getTitle());
-                drawerLayout.closeDrawers();
-
-                return true;
-            }
-        });*/
 
         navController.addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {
             @Override
