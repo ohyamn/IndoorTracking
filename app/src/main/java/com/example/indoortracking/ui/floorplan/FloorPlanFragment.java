@@ -47,15 +47,15 @@ public class FloorPlanFragment extends Fragment{
         Request<JSONArray> request = APIRequests.getAllPlans(view.getContext(), MyApp.Domain);
         queue.add(request);
 
-        HashMap<String,String> temp = APIRequests.getHashMap();
-        if(!temp.isEmpty()){
-            adapter = new FloorPlanAdapter(view.getContext(), temp, requireActivity());
+        floorPlans = APIRequests.getHashMap();
+        Log.d(TAG, floorPlans.toString());
 
-            Log.d(TAG, temp.toString());
-            adapter.setup();
+        adapter = new FloorPlanAdapter(view.getContext(), floorPlans, requireActivity(), this);
 
-            recyclerView.setAdapter(adapter);
-        }
+        adapter.setup();
+
+        recyclerView.setAdapter(adapter);
+
 
         return view;
     }

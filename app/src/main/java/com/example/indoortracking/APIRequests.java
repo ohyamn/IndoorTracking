@@ -59,6 +59,7 @@ public class APIRequests {
     }
 
     public static StringRequest login(Context ctx, String base_url, String username, String password){
+        Boolean success;
         ProgressDialog progressDialog = new ProgressDialog(ctx);
         progressDialog.setMessage("Loading...");
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);

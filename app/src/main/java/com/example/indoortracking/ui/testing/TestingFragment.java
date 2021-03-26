@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,8 +21,11 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 
 import com.example.indoortracking.R;
+import com.example.indoortracking.SharedViewModel;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -29,9 +33,11 @@ import static android.content.ContentValues.TAG;
 
 public class TestingFragment extends Fragment {
     Button scanButton;
+    ImageView floorPlanImage;
     private TestingViewModel testingViewModel;
     private WifiManager wifiManager;
     private BroadcastReceiver wifiReceiver;
+    public SharedViewModel sharedViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -74,6 +80,16 @@ public class TestingFragment extends Fragment {
             Toast.makeText(getActivity().getApplicationContext(), "WiFi needs to be enabled", Toast.LENGTH_SHORT).show();
             wifiManager.setWifiEnabled(true);
         }
+
+        floorPlanImage = root.findViewById(R.id.image_testing);
+        sharedViewModel = ViewModelProviders.of(requireActivity()).get(SharedViewModel.class);
+        Observer<String> nameObserver = new Observer<String>() {
+            @Override
+            public void onChanged(String s) {
+                Picasso.with(getActivity().getApplicationContext()).load(s).into(floorPlanImage);
+            }
+        };
+        sharedViewModel.getNameData().observe(getViewLifecycleOwner(), nameObserver);
         return root;
     }
 

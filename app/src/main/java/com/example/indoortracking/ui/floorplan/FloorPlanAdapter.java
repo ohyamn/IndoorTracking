@@ -9,7 +9,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -31,11 +34,13 @@ public class FloorPlanAdapter extends RecyclerView.Adapter<FloorPlanAdapter.Floo
     HashMap<String, String> floorPlans;
     private final Context context;
     private final FragmentActivity activity;
+    private final FloorPlanFragment currentFragment;
 
-    public FloorPlanAdapter(Context context, HashMap<String, String> floorPlans, FragmentActivity activity){
+    public FloorPlanAdapter(Context context, HashMap<String, String> floorPlans, FragmentActivity activity, FloorPlanFragment currentFragment){
         this.context = context;
         this.floorPlans = floorPlans;
         this.activity = activity;
+        this.currentFragment = currentFragment;
     }
 
 
@@ -45,6 +50,7 @@ public class FloorPlanAdapter extends RecyclerView.Adapter<FloorPlanAdapter.Floo
         Collection<String> values = floorPlans.values();
         images = new ArrayList<>(values);
     }
+
 
 
     @NonNull
@@ -64,8 +70,12 @@ public class FloorPlanAdapter extends RecyclerView.Adapter<FloorPlanAdapter.Floo
             @Override
             public void onClick(View v) {
                 holder.sharedViewModel.setNameData(images.get(position));
-                //Intent intent = new Intent(activity, MappingFragment.class);
-                //activity.startActivity(intent);
+
+                //MappingFragment mappingFragment = new MappingFragment();
+                //FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
+                //ft.replace(R.id.nav_host_fragment, mappingFragment);
+                //ft.addToBackStack(null);
+                //ft.hide(currentFragment).commit();
             }
         });
     }

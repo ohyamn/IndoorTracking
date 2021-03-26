@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -59,6 +60,7 @@ public class MappingFragment extends Fragment {
                 new ViewModelProvider(this).get(MappingViewModel.class);
         View root = inflater.inflate(R.layout.fragment_mapping, container, false);
         final TextView scanText = root.findViewById(R.id.scan_text);
+        scanText.setMovementMethod(new ScrollingMovementMethod());
         mappingViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
@@ -68,8 +70,6 @@ public class MappingFragment extends Fragment {
 
         RequestQueue queue = Volley.newRequestQueue(getActivity().getApplicationContext());
         floorplanScanner = new FloorplanScanner();
-
-
 
         //Setup WifiScan
         wifiManager = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
@@ -134,7 +134,7 @@ public class MappingFragment extends Fragment {
         Observer<String> nameObserver = new Observer<String>() {
             @Override
             public void onChanged(String s) {
-                Picasso.with(getActivity().getApplicationContext()).load(s).placeholder(R.mipmap.ic_launcher).into(floorPlanImage);
+                Picasso.with(getActivity().getApplicationContext()).load(s).into(floorPlanImage);
             }
         };
         sharedViewModel.getNameData().observe(getViewLifecycleOwner(), nameObserver);
