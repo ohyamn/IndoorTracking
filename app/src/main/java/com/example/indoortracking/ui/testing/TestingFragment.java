@@ -23,9 +23,16 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
+import com.example.indoortracking.FloorplanScanner;
+import com.example.indoortracking.MyApp;
 import com.example.indoortracking.R;
 import com.example.indoortracking.SharedViewModel;
 import com.squareup.picasso.Picasso;
+
+import org.json.JSONArray;
 
 import java.util.List;
 
@@ -38,6 +45,8 @@ public class TestingFragment extends Fragment {
     private WifiManager wifiManager;
     private BroadcastReceiver wifiReceiver;
     public SharedViewModel sharedViewModel;
+    FloorplanScanner floorplanScanner;
+    List<ScanResult> results;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -52,6 +61,9 @@ public class TestingFragment extends Fragment {
             }
         });
 
+        RequestQueue queue = Volley.newRequestQueue(getActivity().getApplicationContext());
+        floorplanScanner = new FloorplanScanner();
+
         scanButton = root.findViewById(R.id.scanButton);
         scanButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,7 +76,7 @@ public class TestingFragment extends Fragment {
         wifiReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                List<ScanResult> results = wifiManager.getScanResults();
+                results = wifiManager.getScanResults();
                 requireActivity().unregisterReceiver(wifiReceiver);
 
                 String display = "";
@@ -90,6 +102,10 @@ public class TestingFragment extends Fragment {
             }
         };
         sharedViewModel.getNameData().observe(getViewLifecycleOwner(), nameObserver);
+
+
+
+
         return root;
     }
 

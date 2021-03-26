@@ -153,4 +153,6 @@ public class MappingFragment extends Fragment {
     private void scanFailed(){
         Toast.makeText(getActivity().getApplicationContext(), "Scan failed", Toast.LENGTH_SHORT).show();
     }
+
+
 }

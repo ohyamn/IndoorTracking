@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.wifi.ScanResult;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -22,13 +23,37 @@ import java.util.Map;
 
 public class FloorplanScanner{
     private List<ScanPoint> allScanResults;
+    private List<Double> predictedLocation;
 
     public FloorplanScanner() {
         allScanResults = new ArrayList<>();
+        predictedLocation = new ArrayList<>();
     }
 
     public static FloorplanScanner getInstance() {
         return new FloorplanScanner();
+    }
+
+    public ScanPoint findPoint(List<ScanResult> scanResultList){
+        ScanPoint point = new ScanPoint(0, 0); // placeholder coordinates
+        Map<String, ArrayList<Integer>> SSIDList = new HashMap<>();
+        for(ScanResult scanResult: scanResultList){
+            String id = scanResult.SSID;
+            if (id.equals("")){ continue; } // skip hidden or unknown network names
+            id = id+"/"+scanResult.BSSID;
+            Integer value = scanResult.level;
+            ArrayList<Integer> value_list = new ArrayList<>();
+            if (SSIDList.containsKey(id))
+                value_list = SSIDList.get(id);
+
+            if (value_list != null) {
+                value_list.add(value);
+            }
+            SSIDList.put(id, value_list);
+        }
+
+        point.addAllAPs(SSIDList);
+        return point;
     }
 
     public void mapPoint(double x, double y, List<ScanResult> scanResultList){
@@ -51,7 +76,6 @@ public class FloorplanScanner{
 
         point.addAllAPs(SSIDList);
         allScanResults.add(point);
-        Log.i("Point Mapping", "Point Done");
     }
 
     public JSONArray sendResults() throws JSONException {
@@ -64,6 +88,61 @@ public class FloorplanScanner{
         }
 
         return allJSONresults;
+    }
+
+    public JSONArray sendTest(List<ScanResult> scanResultList) throws JSONException {
+        ScanPoint point = findPoint(scanResultList);
+        JSONArray allJSONresults = new JSONArray();
+        JSONObject obj = new JSONObject();
+        obj.put("point", point.getPoint());
+        obj.put("vector", point.getVector());
+        allJSONresults.put(obj);
+        return allJSONresults;
+    }
+
+    public Request<JSONArray> getLocation(Context ctx, String base_url, List<ScanResult> scanResultList){
+        JSONArray mapped_data;
+        try {
+            mapped_data = sendTest(scanResultList);
+            Log.i("REQUEST DATA", mapped_data.toString());
+        } catch (JSONException e){
+            Log.i("JSON EXCEPTION", e.toString());
+            return null;
+        }
+
+        ProgressDialog progressDialog = new ProgressDialog(ctx);
+        progressDialog.setMessage("Loading...");
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.show();
+        progressDialog.setCancelable(true);
+
+        String url = base_url+"getlocation/";
+        JsonArrayRequest postRequest = new JsonArrayRequest(Request.Method.POST, url, mapped_data,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        progressDialog.dismiss();
+//                        Log.i("JSON RESPONSE", "--->" + response);
+                        try {
+                            predictedLocation.add(response.getDouble(0));
+                            predictedLocation.add(response.getDouble(1));
+                            Log.i("PREDICTED LOCATION", predictedLocation.toString());
+                            Toast.makeText(ctx,predictedLocation.toString(),Toast.LENGTH_SHORT).show();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("RESPONSE ERROR", error.toString());
+                    }
+                }
+        );
+
+        return postRequest;
     }
 
     public Request<JSONArray> sendMapping(Context ctx, String base_url){
@@ -101,6 +180,9 @@ public class FloorplanScanner{
 
         return postRequest;
     }
+    public List<Double> getPredictedLocation(){
+        return predictedLocation;
+    }
 }
 
 class ScanPoint {
@@ -124,7 +206,7 @@ class ScanPoint {
         }
     }
 
-    String getPoint(){ return "("+x+", "+y+")"; }
+    String getPoint(){ return x+","+y; }
 
     ArrayList<Object> getVector(){ return vector; }
 }
@@ -161,6 +243,6 @@ class ScanAP{
         result.put(id, avgRSSI);
         return result;
     }
-}
 
+}
 
