@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import com.example.indoortracking.APICallback;
 import com.example.indoortracking.APIRequests;
 import com.example.indoortracking.MyApp;
 import com.example.indoortracking.R;
@@ -44,17 +45,31 @@ public class FloorPlanFragment extends Fragment{
 
         RequestQueue queue = Volley.newRequestQueue(getActivity().getApplicationContext());
 
-        Request<JSONArray> request = APIRequests.getAllPlans(view.getContext(), MyApp.Domain);
+        Request<JSONArray> request = APIRequests.getAllPlans(view.getContext(), MyApp.Domain, new APICallback() {
+            @Override
+            public void onSuccess(String result) {
+            }
+
+            @Override
+            public void onSuccess(JSONArray result) {
+                floorPlans = APIRequests.getHashMap();
+                Log.d(TAG, floorPlans.toString());
+
+                adapter = new FloorPlanAdapter(view.getContext(), floorPlans, requireActivity(), FloorPlanFragment.this);
+
+                adapter.setup();
+
+                recyclerView.setAdapter(adapter);
+            }
+
+            @Override
+            public void onError(String result) throws Exception {
+
+            }
+        });
         queue.add(request);
 
-        floorPlans = APIRequests.getHashMap();
-        Log.d(TAG, floorPlans.toString());
 
-        adapter = new FloorPlanAdapter(view.getContext(), floorPlans, requireActivity(), this);
-
-        adapter.setup();
-
-        recyclerView.setAdapter(adapter);
 
 
         return view;

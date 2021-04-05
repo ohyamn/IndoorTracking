@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -18,6 +19,10 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.example.indoortracking.ui.floorplan.FloorPlanFragment;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /*import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -28,6 +33,7 @@ public class LoginActivity extends AppCompatActivity {
     ProgressBar progressBar;
     Button logInBtn;
     private static final String LOGIN_KEY = "LOGIN_KEY";
+    String email;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +59,7 @@ public class LoginActivity extends AppCompatActivity {
         logInBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String email = inputEmail.getText().toString();
+                email = inputEmail.getText().toString();
                 final String password = inputPassword.getText().toString();
 
                 /*if (TextUtils.isEmpty(email)){
@@ -70,35 +76,26 @@ public class LoginActivity extends AppCompatActivity {
 
                 //Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 //startActivity(intent);
-                Request<String> request = APIRequests.login(LoginActivity.this, MyApp.Domain,email,password);
+                Request<String> request = APIRequests.login(LoginActivity.this, MyApp.Domain,email,password, new APICallback(){
+
+                    @Override
+                    public void onSuccess(String result) {
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                        startActivity(intent);
+                    }
+
+                    @Override
+                    public void onSuccess(JSONArray result) {
+                    }
+
+                    @Override
+                    public void onError(String result) throws Exception {
+                        Toast.makeText(LoginActivity.this, getString(R.string.auth_failed), Toast.LENGTH_SHORT).show();
+                    }
+                });
                 queue.add(request);
-
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                startActivity(intent);
-
-                /*mAuth.signInWithEmailAndPassword(email, password)
-                        .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                // If sign in fails, display a message to the user. If sign in succeeds
-                                // the auth state listener will be notified and logic to handle the
-                                // signed in user can be handled in the listener.
-                                progressBar.setVisibility(View.GONE);
-                                if (!task.isSuccessful()) {
-                                    // there was an error
-                                    if (password.length() < 6) {
-                                        inputPassword.setError(getString(R.string.minimum_password));
-                                    } else {
-                                        Toast.makeText(LoginActivity.this, getString(R.string.auth_failed), Toast.LENGTH_LONG).show();
-                                    }
-                                } else {
-                                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                                    startActivity(intent);
-                                    finish();
-                                }
-                            }
-                        });*/
             }
         });
     }
 }
+

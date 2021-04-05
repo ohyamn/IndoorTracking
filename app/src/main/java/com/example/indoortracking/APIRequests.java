@@ -14,18 +14,25 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.google.api.gax.httpjson.HttpJsonCallOptions;
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.HashMap;
 
 public class APIRequests {
     static HashMap<String, String> allPlans = new HashMap<>();
-    public static Request<JSONArray> getAllPlans(Context ctx, String base_url){
+    static Boolean success = false;
+
+    public static Request<JSONArray> getAllPlans(Context ctx, String base_url, APICallback callback){
         ProgressDialog progressDialog = new ProgressDialog(ctx);
         progressDialog.setMessage("Loading...");
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressDialog.show();
         progressDialog.setCancelable(true);
+
 
         String url = base_url+"getplans/";
         String bucket_url = "https://storage.googleapis.com/floorplan-images/";
@@ -36,12 +43,16 @@ public class APIRequests {
                         progressDialog.dismiss();
                         Log.i("JSON RESPONSE", "--->" + response);
 
+
                         for(int i=0; i<response.length(); i++) {
                             try{
                                 String title = response.getJSONObject(i).getString("title");
                                 String img = response.getJSONObject(i).getString("plan");
                                 allPlans.put(title, bucket_url+img);
                                 Log.i("Hashmap", allPlans.toString());
+                                if (response != null){
+                                    callback.onSuccess(response);
+                                }
                             } catch (Exception e){
                                 Log.d("Error.Response", e.getMessage());
                             }
@@ -58,13 +69,13 @@ public class APIRequests {
         return getRequest;
     }
 
-    public static StringRequest login(Context ctx, String base_url, String username, String password){
-        Boolean success;
+    public static StringRequest login(Context ctx, String base_url, String username, String password, APICallback callback){
         ProgressDialog progressDialog = new ProgressDialog(ctx);
         progressDialog.setMessage("Loading...");
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressDialog.show();
         progressDialog.setCancelable(true);
+
 
         String url = base_url+"loginmobile/";
         StringRequest postRequest = new StringRequest(Request.Method.POST, url,
@@ -73,6 +84,9 @@ public class APIRequests {
                     public void onResponse(String response) {
                         progressDialog.dismiss();
                         Log.i("STRING RESPONSE", "--->" + response);
+                        if (response.equals("LOGIN_SUCCESS")){
+                            callback.onSuccess(response);
+                        }
                     }
                 },
                 new Response.ErrorListener() {

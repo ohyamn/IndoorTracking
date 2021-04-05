@@ -70,12 +70,6 @@ public class FloorPlanAdapter extends RecyclerView.Adapter<FloorPlanAdapter.Floo
             @Override
             public void onClick(View v) {
                 holder.sharedViewModel.setNameData(images.get(position));
-
-                //MappingFragment mappingFragment = new MappingFragment();
-                //FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
-                //ft.replace(R.id.nav_host_fragment, mappingFragment);
-                //ft.addToBackStack(null);
-                //ft.hide(currentFragment).commit();
             }
         });
     }

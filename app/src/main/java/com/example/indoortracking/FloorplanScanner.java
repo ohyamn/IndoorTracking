@@ -23,7 +23,7 @@ import java.util.Map;
 
 public class FloorplanScanner{
     private List<ScanPoint> allScanResults;
-    private List<Double> predictedLocation;
+    private List<String> predictedLocation;
 
     public FloorplanScanner() {
         allScanResults = new ArrayList<>();
@@ -100,7 +100,7 @@ public class FloorplanScanner{
         return allJSONresults;
     }
 
-    public Request<JSONArray> getLocation(Context ctx, String base_url, List<ScanResult> scanResultList){
+    public Request<JSONArray> getLocation(Context ctx, String base_url, List<ScanResult> scanResultList, APICallback callback){
         JSONArray mapped_data;
         try {
             mapped_data = sendTest(scanResultList);
@@ -124,10 +124,12 @@ public class FloorplanScanner{
                         progressDialog.dismiss();
 //                        Log.i("JSON RESPONSE", "--->" + response);
                         try {
-                            predictedLocation.add(response.getDouble(0));
-                            predictedLocation.add(response.getDouble(1));
+                            predictedLocation.add(response.getString(0));
+                            //predictedLocation.add(response.getString(1));
                             Log.i("PREDICTED LOCATION", predictedLocation.toString());
-                            Toast.makeText(ctx,predictedLocation.toString(),Toast.LENGTH_SHORT).show();
+                            if (response != null){
+                                callback.onSuccess(response);
+                            }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -180,7 +182,7 @@ public class FloorplanScanner{
 
         return postRequest;
     }
-    public List<Double> getPredictedLocation(){
+    public List<String> getPredictedLocation(){
         return predictedLocation;
     }
 }

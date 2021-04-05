@@ -26,6 +26,7 @@ import androidx.lifecycle.ViewModelProviders;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import com.example.indoortracking.APICallback;
 import com.example.indoortracking.FloorplanScanner;
 import com.example.indoortracking.MyApp;
 import com.example.indoortracking.R;
@@ -39,8 +40,8 @@ import java.util.List;
 import static android.content.ContentValues.TAG;
 
 public class TestingFragment extends Fragment {
-    Button scanButton;
-    ImageView floorPlanImage;
+    Button scanButton, locationButton;
+    ImageView floorPlanImage, dotImage;
     private TestingViewModel testingViewModel;
     private WifiManager wifiManager;
     private BroadcastReceiver wifiReceiver;
@@ -64,7 +65,7 @@ public class TestingFragment extends Fragment {
         RequestQueue queue = Volley.newRequestQueue(getActivity().getApplicationContext());
         floorplanScanner = new FloorplanScanner();
 
-        scanButton = root.findViewById(R.id.scanButton);
+        scanButton = root.findViewById(R.id.scanButton2);
         scanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -103,8 +104,38 @@ public class TestingFragment extends Fragment {
         };
         sharedViewModel.getNameData().observe(getViewLifecycleOwner(), nameObserver);
 
+        dotImage = root.findViewById(R.id.image_dot);
 
+        locationButton = root.findViewById(R.id.locationButton);
+        locationButton.setOnClickListener(new View.OnClickListener(){
 
+            @Override
+            public void onClick(View v) {
+                Request<JSONArray> request = floorplanScanner.getLocation(getContext(), MyApp.Domain, results, new APICallback() {
+                    @Override
+                    public void onSuccess(String result) {
+                    }
+
+                    @Override
+                    public void onSuccess(JSONArray result) {
+                        List<String> predictedLocation = floorplanScanner.getPredictedLocation();
+                        String str = predictedLocation.get(0).substring(1,predictedLocation.get(0).length()-1);
+                        String[] temp = str.split(",");
+                        Toast.makeText(getActivity().getApplicationContext(),str,Toast.LENGTH_SHORT).show();
+                        dotImage.setVisibility(View.VISIBLE);
+                        dotImage.setX(Float.parseFloat(temp[0])-5);
+                        dotImage.setY(Float.parseFloat(temp[1])+5);
+
+                        predictedLocation.clear();
+                    }
+
+                    @Override
+                    public void onError(String result) throws Exception {
+                    }
+                });
+                queue.add(request);
+            }
+        });
 
         return root;
     }

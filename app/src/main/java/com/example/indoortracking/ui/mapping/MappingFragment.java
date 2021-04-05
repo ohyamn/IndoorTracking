@@ -125,6 +125,7 @@ public class MappingFragment extends Fragment {
                     Toast.makeText(getActivity().getApplicationContext(),coordinates,Toast.LENGTH_SHORT).show();
                     Log.i("APscan Results", mappingViewModel.getText().toString());
                     floorplanScanner.mapPoint(x,y,results);
+                    Toast.makeText(getActivity().getApplicationContext(),"Point Mapped",Toast.LENGTH_SHORT).show();
                 }
                 return false;
             }
