@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel;
 
 public class SharedViewModel extends ViewModel {
     private MutableLiveData<String> name;
+    private MutableLiveData<String> location;
 
     public void setNameData(String nameData) {
         name.setValue(nameData);
@@ -21,5 +22,17 @@ public class SharedViewModel extends ViewModel {
         }
 
         return name;
+    }
+
+    public void setLocation(String nameData){
+        location.setValue(nameData);
+    }
+
+    public MutableLiveData<String> getLocation() {
+        if (location == null){
+            location = new MutableLiveData<>();
+        }
+
+        return location;
     }
 }

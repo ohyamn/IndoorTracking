@@ -42,10 +42,10 @@ import java.util.List;
 import static android.content.ContentValues.TAG;
 
 public class MappingFragment extends Fragment {
-
     private MappingViewModel mappingViewModel;
     private WifiManager wifiManager;
     private BroadcastReceiver wifiReceiver;
+    TextView locationTitle;
     Button scanButton, uploadButton;
     ImageView floorPlanImage;
     FloorplanScanner floorplanScanner;
@@ -121,11 +121,15 @@ public class MappingFragment extends Fragment {
                 if (event.getAction() == MotionEvent.ACTION_DOWN){
                     int x = (int) event.getX();
                     int y = (int) event.getY();
-                    String coordinates = x + " " + y;
-                    Toast.makeText(getActivity().getApplicationContext(),coordinates,Toast.LENGTH_SHORT).show();
+                    //String coordinates = x + " " + y;
+                    //Toast.makeText(getActivity().getApplicationContext(),coordinates,Toast.LENGTH_SHORT).show();
                     Log.i("APscan Results", mappingViewModel.getText().toString());
-                    floorplanScanner.mapPoint(x,y,results);
-                    Toast.makeText(getActivity().getApplicationContext(),"Point Mapped",Toast.LENGTH_SHORT).show();
+                    if (results == null){
+                        Toast.makeText(getActivity().getApplicationContext(), "Scan First", Toast.LENGTH_SHORT).show();
+                    }else {
+                        floorplanScanner.mapPoint(x, y, results);
+                        Toast.makeText(getActivity().getApplicationContext(), "Point Mapped", Toast.LENGTH_SHORT).show();
+                    }
                 }
                 return false;
             }
@@ -139,6 +143,15 @@ public class MappingFragment extends Fragment {
             }
         };
         sharedViewModel.getNameData().observe(getViewLifecycleOwner(), nameObserver);
+
+        locationTitle = root.findViewById(R.id.location_title);
+        Observer<String> locationObserver = new Observer<String>() {
+            @Override
+            public void onChanged(String s) {
+                locationTitle.setText(s);
+            }
+        };
+        sharedViewModel.getLocation().observe(getViewLifecycleOwner(), locationObserver);
 
 
 

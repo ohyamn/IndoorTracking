@@ -24,7 +24,6 @@ import java.util.HashMap;
 
 public class APIRequests {
     static HashMap<String, String> allPlans = new HashMap<>();
-    static Boolean success = false;
 
     public static Request<JSONArray> getAllPlans(Context ctx, String base_url, APICallback callback){
         ProgressDialog progressDialog = new ProgressDialog(ctx);
@@ -86,6 +85,12 @@ public class APIRequests {
                         Log.i("STRING RESPONSE", "--->" + response);
                         if (response.equals("LOGIN_SUCCESS")){
                             callback.onSuccess(response);
+                        }else{
+                            try {
+                                callback.onError(response);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
                 },
@@ -133,6 +138,41 @@ public class APIRequests {
                     }
                 }
         );
+
+        return postRequest;
+    }
+
+    public static StringRequest sendCurrentPlan(Context ctx, String base_url, String currentPlan){
+
+        ProgressDialog progressDialog = new ProgressDialog(ctx);
+        progressDialog.setMessage("Loading...");
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.show();
+        progressDialog.setCancelable(true);
+
+        String url = base_url+"getplans/";
+        StringRequest postRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        progressDialog.dismiss();
+                        Log.i("STRING RESPONSE", "--->" + response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("RESPONSE ERROR", error.toString());
+                    }
+                }
+        ) {
+            @Override
+            protected HashMap<String, String> getParams() {
+                HashMap<String, String> params = new HashMap<String, String>();
+                params.put("plan", currentPlan);
+                return params;
+            }
+        };
 
         return postRequest;
     }

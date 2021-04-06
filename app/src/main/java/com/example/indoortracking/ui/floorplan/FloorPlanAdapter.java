@@ -7,21 +7,32 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.example.indoortracking.APIRequests;
+import com.example.indoortracking.FloorplanScanner;
+import com.example.indoortracking.MyApp;
 import com.example.indoortracking.R;
 //import com.firebase.ui.database.FirebaseRecyclerAdapter;
 //import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.example.indoortracking.SharedViewModel;
 import com.example.indoortracking.ui.mapping.MappingFragment;
 import com.squareup.picasso.Picasso;
+
+import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,6 +46,8 @@ public class FloorPlanAdapter extends RecyclerView.Adapter<FloorPlanAdapter.Floo
     private final Context context;
     private final FragmentActivity activity;
     private final FloorPlanFragment currentFragment;
+    APIRequests apiRequests;
+    RequestQueue queue;
 
     public FloorPlanAdapter(Context context, HashMap<String, String> floorPlans, FragmentActivity activity, FloorPlanFragment currentFragment){
         this.context = context;
@@ -49,6 +62,8 @@ public class FloorPlanAdapter extends RecyclerView.Adapter<FloorPlanAdapter.Floo
         locations = new ArrayList<>(keySet);
         Collection<String> values = floorPlans.values();
         images = new ArrayList<>(values);
+        queue = Volley.newRequestQueue(context);
+        apiRequests = new APIRequests();
     }
 
 
@@ -70,6 +85,11 @@ public class FloorPlanAdapter extends RecyclerView.Adapter<FloorPlanAdapter.Floo
             @Override
             public void onClick(View v) {
                 holder.sharedViewModel.setNameData(images.get(position));
+                holder.sharedViewModel.setLocation(locations.get(position));
+                String locationName = locations.get(position);
+                Toast.makeText(context, locationName,Toast.LENGTH_SHORT).show();
+                StringRequest request = apiRequests.sendCurrentPlan(context, MyApp.Domain, locationName);
+                queue.add(request);
             }
         });
     }

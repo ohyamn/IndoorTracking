@@ -25,8 +25,10 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.indoortracking.APICallback;
+import com.example.indoortracking.APIRequests;
 import com.example.indoortracking.FloorplanScanner;
 import com.example.indoortracking.MyApp;
 import com.example.indoortracking.R;
@@ -48,6 +50,8 @@ public class TestingFragment extends Fragment {
     public SharedViewModel sharedViewModel;
     FloorplanScanner floorplanScanner;
     List<ScanResult> results;
+    APIRequests apiRequests;
+    String locationTitle;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -64,6 +68,7 @@ public class TestingFragment extends Fragment {
 
         RequestQueue queue = Volley.newRequestQueue(getActivity().getApplicationContext());
         floorplanScanner = new FloorplanScanner();
+        apiRequests = new APIRequests();
 
         scanButton = root.findViewById(R.id.scanButton2);
         scanButton.setOnClickListener(new View.OnClickListener() {
@@ -107,10 +112,21 @@ public class TestingFragment extends Fragment {
         dotImage = root.findViewById(R.id.image_dot);
 
         locationButton = root.findViewById(R.id.locationButton);
+
+        Observer<String> locationObserver = new Observer<String>() {
+            @Override
+            public void onChanged(String s) {
+                locationTitle = s;
+            }
+        };
+        sharedViewModel.getLocation().observe(getViewLifecycleOwner(), locationObserver);
+
         locationButton.setOnClickListener(new View.OnClickListener(){
 
             @Override
             public void onClick(View v) {
+                StringRequest currentPlan = apiRequests.sendCurrentPlan(getContext(), MyApp.Domain, locationTitle);
+                queue.add(currentPlan);
                 Request<JSONArray> request = floorplanScanner.getLocation(getContext(), MyApp.Domain, results, new APICallback() {
                     @Override
                     public void onSuccess(String result) {
