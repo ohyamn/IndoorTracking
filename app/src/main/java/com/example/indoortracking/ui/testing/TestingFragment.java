@@ -139,8 +139,13 @@ public class TestingFragment extends Fragment {
                         String[] temp = str.split(",");
                         Toast.makeText(getActivity().getApplicationContext(),str,Toast.LENGTH_SHORT).show();
                         dotImage.setVisibility(View.VISIBLE);
-                        dotImage.setX(Float.parseFloat(temp[0])-5);
-                        dotImage.setY(Float.parseFloat(temp[1])+5);
+                        float x = Float.parseFloat(temp[0]);
+                        float y = Float.parseFloat(temp[1]);
+                        float newx = x/100 * floorPlanImage.getWidth();
+                        float newy = y/100 * floorPlanImage.getHeight();
+
+                        dotImage.setX(newx-5);
+                        dotImage.setY(newy+5);
 
                         predictedLocation.clear();
                     }

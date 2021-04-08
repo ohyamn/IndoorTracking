@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
+import android.opengl.Matrix;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
@@ -119,15 +120,20 @@ public class MappingFragment extends Fragment {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN){
-                    int x = (int) event.getX();
-                    int y = (int) event.getY();
-                    //String coordinates = x + " " + y;
-                    //Toast.makeText(getActivity().getApplicationContext(),coordinates,Toast.LENGTH_SHORT).show();
+                    float x = event.getX();
+                    float y = event.getY();
+                    int width = floorPlanImage.getWidth();
+                    int height = floorPlanImage.getHeight();
+                    float newx = x/width*100;
+                    float newy = y/height*100;
+
+                    String coordinates = newx + " " + newy;
+                    Toast.makeText(getActivity().getApplicationContext(), coordinates,Toast.LENGTH_SHORT).show();
                     Log.i("APscan Results", mappingViewModel.getText().toString());
                     if (results == null){
                         Toast.makeText(getActivity().getApplicationContext(), "Scan First", Toast.LENGTH_SHORT).show();
                     }else {
-                        floorplanScanner.mapPoint(x, y, results);
+                        floorplanScanner.mapPoint(newx, newy, results);
                         Toast.makeText(getActivity().getApplicationContext(), "Point Mapped", Toast.LENGTH_SHORT).show();
                     }
                 }
