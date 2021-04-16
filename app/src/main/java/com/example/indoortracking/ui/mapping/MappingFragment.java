@@ -88,6 +88,7 @@ public class MappingFragment extends Fragment {
                     Log.i(TAG, "SSID: "+sr.SSID+", Level: "+sr.level);
                 }
                 mappingViewModel.setmText(display);
+                Toast.makeText(getContext(),"Scanned", Toast.LENGTH_SHORT).show();
             }
         };
 
