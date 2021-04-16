@@ -1,13 +1,10 @@
 package com.example.indoortracking;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,12 +13,10 @@ import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
-import com.example.indoortracking.ui.floorplan.FloorPlanFragment;
 
 import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /*import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -29,11 +24,11 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;*/
 
 public class LoginActivity extends AppCompatActivity {
-    EditText inputEmail, inputPassword;
+    EditText inputUsername, inputPassword;
     ProgressBar progressBar;
     Button logInBtn;
     private static final String LOGIN_KEY = "LOGIN_KEY";
-    String email;
+    String username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +46,7 @@ public class LoginActivity extends AppCompatActivity {
 
         RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
 
-        inputEmail = findViewById(R.id.email);
+        inputUsername = findViewById(R.id.email);
         inputPassword = findViewById(R.id.password);
         progressBar = findViewById(R.id.progressBar);
         logInBtn = findViewById(R.id.btn_login);
@@ -59,24 +54,12 @@ public class LoginActivity extends AppCompatActivity {
         logInBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                email = inputEmail.getText().toString();
+                username = inputUsername.getText().toString();
                 final String password = inputPassword.getText().toString();
-
-                /*if (TextUtils.isEmpty(email)){
-                    Toast.makeText(getApplicationContext(),"Enter email address!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                if (TextUtils.isEmpty(password)) {
-                    Toast.makeText(getApplicationContext(), "Enter password!", Toast.LENGTH_SHORT).show();
-                    return;
-                }*/
 
                 progressBar.setVisibility(View.VISIBLE);
 
-                //Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                //startActivity(intent);
-                Request<String> request = APIRequests.login(LoginActivity.this, MyApp.Domain,email,password, new APICallback(){
+                Request<String> request = APIRequests.login(LoginActivity.this, MyApp.Domain,username,password, new APICallback(){
 
                     @Override
                     public void onSuccess(String result) {
@@ -89,8 +72,13 @@ public class LoginActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onError(String result) throws Exception {
+                    public void onError(VolleyError result) throws Exception {
                         Toast.makeText(LoginActivity.this, getString(R.string.auth_failed), Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onError(String result) {
+
                     }
                 });
                 queue.add(request);

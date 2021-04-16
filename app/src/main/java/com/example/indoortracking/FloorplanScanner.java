@@ -140,6 +140,12 @@ public class FloorplanScanner{
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.d("RESPONSE ERROR", error.toString());
+                        try {
+                            callback.onError(error);
+                            progressDialog.dismiss();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
         );
@@ -147,7 +153,7 @@ public class FloorplanScanner{
         return postRequest;
     }
 
-    public Request<JSONArray> sendMapping(Context ctx, String base_url){
+    public Request<JSONArray> sendMapping(Context ctx, String base_url, APICallback callback){
         JSONArray mapped_data;
         try {
             mapped_data = sendResults();
@@ -170,12 +176,19 @@ public class FloorplanScanner{
                     public void onResponse(JSONArray response) {
                         progressDialog.dismiss();
                         Log.i("JSON RESPONSE", "--->" + response);
+                        callback.onSuccess(response);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.d("RESPONSE ERROR", error.toString());
+                        try {
+                            callback.onError(error);
+                            progressDialog.dismiss();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
         );

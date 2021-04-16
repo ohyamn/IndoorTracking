@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
-import android.opengl.Matrix;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
@@ -20,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -29,7 +29,9 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
+import com.example.indoortracking.APICallback;
 import com.example.indoortracking.FloorplanScanner;
 import com.example.indoortracking.MyApp;
 import com.example.indoortracking.R;
@@ -108,9 +110,34 @@ public class MappingFragment extends Fragment {
          @Override
         public void onClick(View v) {
         //upload pic with coordinates
-             Toast.makeText(getActivity().getApplicationContext(), "Uploading...", Toast.LENGTH_SHORT).show();
-             Request<JSONArray> request = floorplanScanner.sendMapping(getContext(), MyApp.Domain);
-             queue.add(request);
+             if(results==null){
+                 Toast.makeText(getContext(), "Map first", Toast.LENGTH_SHORT).show();
+             }else{
+                 Request<JSONArray> request = floorplanScanner.sendMapping(getContext(), MyApp.Domain, new APICallback(){
+
+                     @Override
+                     public void onSuccess(String result) {
+
+                     }
+
+                     @Override
+                     public void onSuccess(JSONArray result) {
+                         Toast.makeText(getContext(), "Uploaded", Toast.LENGTH_SHORT).show();
+                     }
+
+                     @Override
+                     public void onError(VolleyError result) throws Exception {
+                         Toast.makeText(getContext(), "Error Uploading", Toast.LENGTH_SHORT).show();
+                     }
+
+                     @Override
+                     public void onError(String result) {
+
+                     }
+                 });
+
+                 queue.add(request);
+             }
           }
          });
 
@@ -128,7 +155,7 @@ public class MappingFragment extends Fragment {
                     float newy = y/height*100;
 
                     String coordinates = newx + " " + newy;
-                    Toast.makeText(getActivity().getApplicationContext(), coordinates,Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getActivity().getApplicationContext(), coordinates,Toast.LENGTH_SHORT).show();
                     Log.i("APscan Results", mappingViewModel.getText().toString());
                     if (results == null){
                         Toast.makeText(getActivity().getApplicationContext(), "Scan First", Toast.LENGTH_SHORT).show();
@@ -159,6 +186,17 @@ public class MappingFragment extends Fragment {
         };
         sharedViewModel.getLocation().observe(getViewLifecycleOwner(), locationObserver);
 
+        OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
+            @Override
+            public void handleOnBackPressed() {
+                // Handle the back button even
+                Log.d("BACKBUTTON", "Back button clicks");
+            }
+        };
+
+        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), callback);
+
+
 
 
         return root;
@@ -173,6 +211,5 @@ public class MappingFragment extends Fragment {
     private void scanFailed(){
         Toast.makeText(getActivity().getApplicationContext(), "Scan failed", Toast.LENGTH_SHORT).show();
     }
-
 
 }

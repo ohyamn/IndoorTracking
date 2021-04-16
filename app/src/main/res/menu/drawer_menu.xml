@@ -17,9 +17,6 @@
             android:title="@string/floor_plans"/>
 
         <item
-            android:id="@+id/navigation_settings"
-            android:title="@string/settings"/>
-        <item
             android:id="@+id/logout"
             android:title="Logout"/>
     </group>

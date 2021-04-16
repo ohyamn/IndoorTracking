@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.example.indoortracking.APICallback;
 import com.example.indoortracking.APIRequests;
@@ -63,7 +64,12 @@ public class FloorPlanFragment extends Fragment{
             }
 
             @Override
-            public void onError(String result) throws Exception {
+            public void onError(VolleyError result) throws Exception {
+
+            }
+
+            @Override
+            public void onError(String result) {
 
             }
         });

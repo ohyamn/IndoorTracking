@@ -25,6 +25,7 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.indoortracking.APICallback;
@@ -125,36 +126,50 @@ public class TestingFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
-                StringRequest currentPlan = apiRequests.sendCurrentPlan(getContext(), MyApp.Domain, locationTitle);
-                queue.add(currentPlan);
-                Request<JSONArray> request = floorplanScanner.getLocation(getContext(), MyApp.Domain, results, new APICallback() {
-                    @Override
-                    public void onSuccess(String result) {
-                    }
+                if(locationTitle==null){
+                    Toast.makeText(getContext(),"Download Plan", Toast.LENGTH_SHORT).show();
+                }else {
+                    StringRequest currentPlan = apiRequests.sendCurrentPlan(getContext(), MyApp.Domain, locationTitle);
+                    queue.add(currentPlan);
+                }
+                if(results == null){
+                    Toast.makeText(getContext(), "Scan First", Toast.LENGTH_SHORT).show();
+                }else {
+                    Request<JSONArray> request = floorplanScanner.getLocation(getContext(), MyApp.Domain, results, new APICallback() {
+                        @Override
+                        public void onSuccess(String result) {
+                        }
 
-                    @Override
-                    public void onSuccess(JSONArray result) {
-                        List<String> predictedLocation = floorplanScanner.getPredictedLocation();
-                        String str = predictedLocation.get(0).substring(1,predictedLocation.get(0).length()-1);
-                        String[] temp = str.split(",");
-                        Toast.makeText(getActivity().getApplicationContext(),str,Toast.LENGTH_SHORT).show();
-                        dotImage.setVisibility(View.VISIBLE);
-                        float x = Float.parseFloat(temp[0]);
-                        float y = Float.parseFloat(temp[1]);
-                        float newx = x/100 * floorPlanImage.getWidth();
-                        float newy = y/100 * floorPlanImage.getHeight();
+                        @Override
+                        public void onSuccess(JSONArray result) {
+                            List<String> predictedLocation = floorplanScanner.getPredictedLocation();
+                            String str = predictedLocation.get(0).substring(1, predictedLocation.get(0).length() - 1);
+                            String[] temp = str.split(",");
+                            Toast.makeText(getActivity().getApplicationContext(), str, Toast.LENGTH_SHORT).show();
+                            dotImage.setVisibility(View.VISIBLE);
+                            float x = Float.parseFloat(temp[0]);
+                            float y = Float.parseFloat(temp[1]);
+                            float newx = x / 100 * floorPlanImage.getWidth();
+                            float newy = y / 100 * floorPlanImage.getHeight();
 
-                        dotImage.setX(newx-5);
-                        dotImage.setY(newy+5);
+                            dotImage.setX(newx - 5);
+                            dotImage.setY(newy - 5);
 
-                        predictedLocation.clear();
-                    }
+                            predictedLocation.clear();
+                        }
 
-                    @Override
-                    public void onError(String result) throws Exception {
-                    }
-                });
-                queue.add(request);
+                        @Override
+                        public void onError(VolleyError result) throws Exception {
+                            Toast.makeText(getContext(), "Error getting location", Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onError(String result) {
+
+                        }
+                    });
+                    queue.add(request);
+                }
             }
         });
 
