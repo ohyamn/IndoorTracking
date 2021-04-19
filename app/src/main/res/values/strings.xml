@@ -110,6 +110,7 @@
     <string name="navigation_drawer_open" />
     <string name="navigation_drawer_close" />
     <string name="start_scan">Start Scan</string>
+    <string name="scanning">Scanning...</string>
     <string name="hint_email">Email</string>
     <string name="hint_password">Password</string>
     <string name="btn_login">Log In</string>

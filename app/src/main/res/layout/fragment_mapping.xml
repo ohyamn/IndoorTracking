@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.mapping.MappingFragment">
+    tools:context=".ui.mapping.MappingFragment"
+    android:id="@+id/fragment_mapping">
 
     <TextView
         android:id="@+id/scan_text"
@@ -60,4 +61,4 @@
        app:layout_constraintBottom_toBottomOf="parent"
        app:layout_constraintLeft_toRightOf="@id/scanButton"
        tools:ignore="NotSibling" />
-   </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
