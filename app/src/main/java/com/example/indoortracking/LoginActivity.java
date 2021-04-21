@@ -73,12 +73,11 @@ public class LoginActivity extends AppCompatActivity {
 
                     @Override
                     public void onError(VolleyError result) throws Exception {
-                        Toast.makeText(LoginActivity.this, getString(R.string.auth_failed), Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
                     public void onError(String result) {
-
+                        Toast.makeText(LoginActivity.this, getString(R.string.auth_failed), Toast.LENGTH_SHORT).show();
                     }
                 });
                 queue.add(request);
