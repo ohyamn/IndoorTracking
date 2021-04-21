@@ -17,11 +17,14 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.typeText;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasData;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.toPackage;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.*;
 
 /**
@@ -37,6 +40,14 @@ public class LogInActivityTest {
     public ActivityScenarioRule<LoginActivity> activityRule
             = new ActivityScenarioRule<>(LoginActivity.class);
 
+    @Test
+    public void loginTestFalse(){
+        onView(withId(R.id.email)).perform(typeText(""),closeSoftKeyboard());
+        onView(withId(R.id.password)).perform(typeText(""),closeSoftKeyboard());
+        onView(withId(R.id.btn_login)).perform(click());
+
+        onView(withId(R.id.login_activity)).check(matches(isDisplayed()));
+    }
     @Test
     public void loginTestTrue(){
         Intents.init();
