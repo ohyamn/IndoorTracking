@@ -56,7 +56,7 @@ public class DownloadMapPlans {
         );
     }
 
-    /*@Test
+    @Test
     public void downloadPlans() throws InterruptedException {
         ViewInteraction appCompatImageButton = onView(
                 allOf(withContentDescription("Open navigation drawer"),
@@ -128,7 +128,7 @@ public class DownloadMapPlans {
         onView(withId(R.id.image_dot)).check(matches(isDisplayed()));
 
         TimeUnit.SECONDS.sleep(3);
-    }*/
+    }
     @Test
     public void mapFail() throws InterruptedException {
         TimeUnit.SECONDS.sleep(1);
@@ -136,7 +136,10 @@ public class DownloadMapPlans {
 
         onView(withText(R.string.map_first)).inRoot(withDecorView(not(decorView)))
                 .check(matches(isDisplayed()));
+    }
 
+    @Test
+    public void mapFailScan() throws InterruptedException {
         ViewInteraction appCompatImageButton = onView(
                 allOf(withContentDescription("Open navigation drawer"),
                         childAtPosition(
@@ -179,8 +182,9 @@ public class DownloadMapPlans {
         onView(withText(R.string.scan_first)).inRoot(withDecorView(not(decorView)))
                 .check(matches(isDisplayed()));
     }
+
     @Test
-    public void testFail(){
+    public void testFailDownload(){
         onView(allOf(withId(R.id.navigation_testing), withContentDescription("Testing"),
                 childAtPosition(
                         childAtPosition(
@@ -193,7 +197,9 @@ public class DownloadMapPlans {
 
         onView(withText(R.string.download)).inRoot(withDecorView(not(decorView)))
                 .check(matches(isDisplayed()));
-
+    }
+    @Test
+    public void testFailScan(){
         ViewInteraction appCompatImageButton = onView(
                 allOf(withContentDescription("Open navigation drawer"),
                         childAtPosition(
@@ -201,7 +207,7 @@ public class DownloadMapPlans {
                                         childAtPosition(
                                                 withClassName(is("com.google.android.material.appbar.AppBarLayout")),
                                                 0)),
-                                2),
+                                1),
                         isDisplayed()));
         appCompatImageButton.perform(click());
 
@@ -225,7 +231,7 @@ public class DownloadMapPlans {
                                         childAtPosition(
                                                 withClassName(is("com.google.android.material.appbar.AppBarLayout")),
                                                 0)),
-                                2),
+                                1),
                         isDisplayed()));
         appCompatImageButton2.perform(click());
 
