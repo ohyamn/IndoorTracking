@@ -1,5 +1,6 @@
 package com.example.indoortracking;
 
+import android.os.IBinder;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
@@ -86,20 +87,21 @@ public class DownloadMapPlans {
 
         onView(withId(R.id.scan_text)).check(matches(not(withText(""))));
 
-        for(int i = 0; i<5; i++){
+        for (int i = 0; i < 12; i++) {
             onView(withId(R.id.image_mapping)).perform(click());
             TimeUnit.SECONDS.sleep(2);
         }
         onView(withId(R.id.uploadButton)).perform(click());
 
         onView(allOf(withId(R.id.navigation_testing), withContentDescription("Testing"),
+                childAtPosition(
                         childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.nav_view),
-                                        0),
-                                1),
-                        isDisplayed())).perform(click());
+                                withId(R.id.nav_view),
+                                0),
+                        1),
+                isDisplayed())).perform(click());
 
+        TimeUnit.SECONDS.sleep(1);
         onView(withId(R.id.fragment_testing)).check(matches(isDisplayed()));
 
         onView(withId(R.id.scanButton2)).perform(click());
@@ -115,7 +117,6 @@ public class DownloadMapPlans {
         TimeUnit.SECONDS.sleep(3);
 
     }
-
     private static Matcher<View> childAtPosition(
             final Matcher<View> parentMatcher, final int position) {
 

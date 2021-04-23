@@ -54,6 +54,7 @@ public class MappingFragment extends Fragment {
     FloorplanScanner floorplanScanner;
     List<ScanResult> results;
     public SharedViewModel sharedViewModel;
+    int count = 0;
 
 
     @SuppressLint("ClickableViewAccessibility")
@@ -113,6 +114,9 @@ public class MappingFragment extends Fragment {
         //upload pic with coordinates
              if(results==null){
                  Toast.makeText(getContext(), "Map first", Toast.LENGTH_SHORT).show();
+             }else if(count<11) {
+                 int temp = 11-count;
+                 Toast.makeText(getContext(), "Map " + temp +" more points" , Toast.LENGTH_SHORT).show();
              }else{
                  Request<JSONArray> request = floorplanScanner.sendMapping(getContext(), MyApp.Domain, new APICallback(){
 
@@ -154,6 +158,7 @@ public class MappingFragment extends Fragment {
                     int height = floorPlanImage.getHeight();
                     float newx = x/width*100;
                     float newy = y/height*100;
+                    count++;
 
                     String coordinates = newx + " " + newy;
                     //Toast.makeText(getActivity().getApplicationContext(), coordinates,Toast.LENGTH_SHORT).show();

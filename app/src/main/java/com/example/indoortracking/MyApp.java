@@ -18,6 +18,7 @@ public class MyApp extends Application {
     private static MyApp _instance;
     private RequestQueue _requestQueue;
     private SharedPreferences _preferences;
+    // http://10.12.12.121:8000/
     public static String Domain = "http://10.12.12.121:8000/"; // replace with IP address of machine running the local server
     public static MyApp get() {
         return _instance;

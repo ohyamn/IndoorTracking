@@ -132,7 +132,7 @@ public class TestingFragment extends Fragment {
                     StringRequest currentPlan = apiRequests.sendCurrentPlan(getContext(), MyApp.Domain, locationTitle);
                     queue.add(currentPlan);
                 }
-                if(results == null){
+                if(results == null && locationTitle!=null){
                     Toast.makeText(getContext(), "Scan First", Toast.LENGTH_SHORT).show();
                 }else {
                     Request<JSONArray> request = floorplanScanner.getLocation(getContext(), MyApp.Domain, results, new APICallback() {

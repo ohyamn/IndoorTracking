@@ -41,9 +41,25 @@ public class LogInActivityTest {
             = new ActivityScenarioRule<>(LoginActivity.class);
 
     @Test
-    public void loginTestFalse(){
+    public void loginTestFalseEmpty(){
         onView(withId(R.id.email)).perform(typeText(""),closeSoftKeyboard());
         onView(withId(R.id.password)).perform(typeText(""),closeSoftKeyboard());
+        onView(withId(R.id.btn_login)).perform(click());
+
+        onView(withId(R.id.login_activity)).check(matches(isDisplayed()));
+    }
+    @Test
+    public void loginTestFalseInvalidUserName(){
+        onView(withId(R.id.email)).perform(typeText("projectadnin"),closeSoftKeyboard());
+        onView(withId(R.id.password)).perform(typeText("123456"),closeSoftKeyboard());
+        onView(withId(R.id.btn_login)).perform(click());
+
+        onView(withId(R.id.login_activity)).check(matches(isDisplayed()));
+    }
+    @Test
+    public void loginTestFalseInvalidPassword(){
+        onView(withId(R.id.email)).perform(typeText("projectadmin"),closeSoftKeyboard());
+        onView(withId(R.id.password)).perform(typeText("122456"),closeSoftKeyboard());
         onView(withId(R.id.btn_login)).perform(click());
 
         onView(withId(R.id.login_activity)).check(matches(isDisplayed()));
