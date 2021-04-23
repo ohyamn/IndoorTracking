@@ -134,7 +134,7 @@ public class TestingFragment extends Fragment {
                 }
                 if(results == null && locationTitle!=null){
                     Toast.makeText(getContext(), "Scan First", Toast.LENGTH_SHORT).show();
-                }else {
+                }else if(results != null && locationTitle != null) {
                     Request<JSONArray> request = floorplanScanner.getLocation(getContext(), MyApp.Domain, results, new APICallback() {
                         @Override
                         public void onSuccess(String result) {
