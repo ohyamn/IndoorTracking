@@ -127,13 +127,13 @@ public class TestingFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if(locationTitle==null){
-                    Toast.makeText(getContext(),"Download Plan", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(),R.string.download, Toast.LENGTH_SHORT).show();
                 }else {
                     StringRequest currentPlan = apiRequests.sendCurrentPlan(getContext(), MyApp.Domain, locationTitle);
                     queue.add(currentPlan);
                 }
                 if(results == null && locationTitle!=null){
-                    Toast.makeText(getContext(), "Scan First", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), R.string.scan_first, Toast.LENGTH_SHORT).show();
                 }else if(results != null && locationTitle != null) {
                     Request<JSONArray> request = floorplanScanner.getLocation(getContext(), MyApp.Domain, results, new APICallback() {
                         @Override

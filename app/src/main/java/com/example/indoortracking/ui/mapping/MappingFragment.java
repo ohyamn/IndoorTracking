@@ -113,7 +113,7 @@ public class MappingFragment extends Fragment {
         public void onClick(View v) {
         //upload pic with coordinates
              if(results==null){
-                 Toast.makeText(getContext(), "Map first", Toast.LENGTH_SHORT).show();
+                 Toast.makeText(getContext(), R.string.map_first, Toast.LENGTH_SHORT).show();
              }else if(count<11) {
                  int temp = 11-count;
                  Toast.makeText(getContext(), "Map " + temp +" more points" , Toast.LENGTH_SHORT).show();
@@ -164,7 +164,7 @@ public class MappingFragment extends Fragment {
                     //Toast.makeText(getActivity().getApplicationContext(), coordinates,Toast.LENGTH_SHORT).show();
                     Log.i("APscan Results", mappingViewModel.getText().toString());
                     if (results == null){
-                        Toast.makeText(getActivity().getApplicationContext(), "Scan First", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity().getApplicationContext(), R.string.scan_first, Toast.LENGTH_SHORT).show();
                     }else {
                         floorplanScanner.mapPoint(newx, newy, results);
                         Toast.makeText(getActivity().getApplicationContext(), "Point Mapped", Toast.LENGTH_SHORT).show();
